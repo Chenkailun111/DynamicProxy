@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--创建service-->
+    <bean id="udao" class="com.dao.impl.UsersDaoImpl"></bean>
+    <bean id="ser" class="com.service.impl.UsersServiceImpl">
+        <property name="dao" ref="udao"/>
+    </bean>
+
+    <!--1.创建增强类对象-->
+   <bean id="aop1" class="com.aop.MyAop"></bean>
+    <bean id="be" class="com.aop.Begin"></bean>
+    <!--2.定义增强类和目标方法的关系-->
+    <aop:config>
+        <!--pointcut  切入点,id自定义，expression写的是切入的方法的格式
+           execution(方法的格式)-->
+        <aop:pointcut id="pc1" expression="execution(* com.dao.impl.*.*(..))"/>
+        <aop:advisor advice-ref="be" pointcut-ref="pc1"></aop:advisor>
+        <!--ref="增强类的对象"-->
+        <aop:aspect ref="aop1">
+            <!--定义增强的类型:before表示前置增强
+            <aop:before method="qianzhi" pointcut-ref="pc1" />-->
+            <!--后置增强-->
+            <aop:after-returning method="houzhi" pointcut-ref="pc1"/>
+            <!--最终增强-->
+            <aop:after method="zuizhong" pointcut-ref="pc1"></aop:after>
+            <!--环绕
+            <aop:around method="huanrao" pointcut-ref="pc1"></aop:around>-->
+            <!--异常增强-->
+            <aop:after-throwing method="yichang" pointcut-ref="pc1"/>
+
+        </aop:aspect>
+    </aop:config>
+
+
+
+
+</beans>
